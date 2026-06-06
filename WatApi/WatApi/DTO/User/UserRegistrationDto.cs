@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WatApi.DTO
+namespace WatApi.DTO.User
 {
     public class UserRegistrationDto
     {

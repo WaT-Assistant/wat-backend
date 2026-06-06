@@ -1,23 +1,24 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-using WatApi.DTO;
 using WatApi.Models;
 using WatApi.Data;
 using Microsoft.EntityFrameworkCore;
 using WatApi.Services.Interfaces;
+using WatApi.DTO.User;
 
 namespace WatApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly WatApi.Services.Interfaces.IUserService _service;
+        private readonly WatApi.Services.Interfaces.IAuthService _authService;
 
-        public UsersController(IUserService service)
+        public AuthController(IUserService service, IAuthService authService)
         {
             _service = service;
+            _authService = authService;
         }
 
         [HttpPost("register")]
@@ -34,6 +35,19 @@ namespace WatApi.Controllers
                 user.FullName
             });
         }
-                
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
+        {
+            try
+            {
+                string token = await _authService.LoginAsync(dto);
+                return Ok(new { Token = token });
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+        }
     }
 }

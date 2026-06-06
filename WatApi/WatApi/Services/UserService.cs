@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WatApi.Data;
-using WatApi.DTO;
+using WatApi.DTO.User;
 using WatApi.Models;
+using WatApi.Security;
 
 namespace WatApi.Services
 {
@@ -21,7 +22,7 @@ namespace WatApi.Services
                 Id = Guid.NewGuid(),
                 Email = dto.EmailAddress,
                 FullName = dto.FullName,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                PasswordHash = PasswordHasher.HashPassword(dto.Password),
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -30,7 +31,7 @@ namespace WatApi.Services
             return user;
         }
 
-        public async Task<User>? GetUserByEmailAsync(string email) => 
+        public async Task<User?> GetUserByEmailAsync(string email) => 
             await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
     }
 }
