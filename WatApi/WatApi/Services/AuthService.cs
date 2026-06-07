@@ -24,7 +24,7 @@ namespace WatApi.Services
         {
             var user = await _userService.GetUserByEmailAsync(dto.Email);
             if (user == null || !PasswordHasher.Verify(dto.Password, user.PasswordHash))
-                throw new Exception("Invalid enail or password");
+                throw new Exception("Invalid email or password");
             return GenerateJWT(user);
         }
 
