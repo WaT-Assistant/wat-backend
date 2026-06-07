@@ -32,9 +32,29 @@ namespace WatApi.Services
                 HousingCostPerWeek = dto.HousingCostPerWeek,
             };
 
-            await _context.JobOffers.AddAsync(jobOffer);
-            _context.SaveChanges();
+            _context.JobOffers.Add(jobOffer);
+            await _context.SaveChangesAsync();
             return jobOffer;
+        }
+
+        public async Task<JobOffer?> GetJobOfferByUserIdAsync(Guid userId) => 
+            await _context.JobOffers.FirstOrDefaultAsync(jo => jo.UserId == userId);
+
+        public async Task<JobOffer> UpdateJobOfferAsync(Guid userId, JobOfferUpdateDto dto)
+        {
+            var offer = await GetJobOfferByUserIdAsync(userId) ?? 
+                throw new InvalidOperationException("Job offer not found for the user.");
+
+            offer.Position = dto.Position;
+            offer.Employer = dto.Employer;
+            offer.PlaceOfWork = dto.PlaceOfWork;
+            offer.PayPerHour = dto.PayPerHour;
+            offer.HousingProvided = dto.HousingProvided;
+            offer.HousingCostPerWeek = dto.HousingCostPerWeek;
+            offer.Status = dto.Status;
+
+            await _context.SaveChangesAsync();
+            return offer;
         }
     }
 }

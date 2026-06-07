@@ -26,8 +26,8 @@ namespace WatApi.Services
                 CreatedAt = DateTime.UtcNow
             };
 
-            await _context.Users.AddAsync(user);
-            _context.SaveChanges();
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
             return user;
         }
 
