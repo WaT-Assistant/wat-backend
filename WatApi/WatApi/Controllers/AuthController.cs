@@ -21,22 +21,24 @@ namespace WatApi.Controllers
             _authService = authService;
         }
 
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] UserRegistrationDto dto)
         {
             if (await _service.GetUserByEmailAsync(dto.EmailAddress) != null)
                 return BadRequest("This email adress already exists!");
 
             User user = await _service.CreateUserAsync(dto);
-            return StatusCode(201, new
+            var userResponse = new UserResponseDto
             {
-                user.Id,
-                user.Email,
-                user.FullName
-            });
+                Id = user.Id,
+                Email = user.Email,
+                FullName = user.FullName
+            };
+
+            return StatusCode(201, userResponse);
         }
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
         {
             try
