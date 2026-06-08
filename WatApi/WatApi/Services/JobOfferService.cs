@@ -6,14 +6,9 @@ using WatApi.Services.Interfaces;
 
 namespace WatApi.Services
 {
-    public class JobOfferService : IJobOfferService
+    public class JobOfferService(AppDbContext context) : IJobOfferService
     {
-        private readonly AppDbContext _context;
-
-        public JobOfferService(AppDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AppDbContext _context = context;
 
         public async Task<JobOffer> CreateJobOfferAsync(Guid userId, JobOfferCreateDto dto)
         {

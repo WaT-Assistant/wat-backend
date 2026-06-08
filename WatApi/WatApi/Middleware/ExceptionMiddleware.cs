@@ -43,7 +43,7 @@ namespace WatApi.Middleware
             {
                 type = "https://httpstatuses.com/" + status,
                 title = status == 500 ? "Server Error" : "Validation Error",
-                status = status,
+                status,
                 detail = detailMessage
             };
 

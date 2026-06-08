@@ -11,16 +11,10 @@ using WatApi.Services.Interfaces;
 
 namespace WatApi.Services
 {
-    public class AuthService : IAuthService
+    public class AuthService(IUserService userService, IOptions<JwtSettings> jwtOptions) : IAuthService
     {
-        private readonly IUserService _userService;
-        private readonly JwtSettings _jwtSettings;
-
-        public AuthService(IUserService userService, IOptions<JwtSettings> jwtOptions)
-        {
-            _userService = userService;
-            _jwtSettings = jwtOptions.Value;
-        }
+        private readonly IUserService _userService = userService;
+        private readonly JwtSettings _jwtSettings = jwtOptions.Value;
 
         public async Task<string> LoginAsync(UserLoginDto dto)
         {

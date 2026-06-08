@@ -18,29 +18,22 @@ namespace WatApi.Controllers
         [HttpPost("CreateJo")]
         public async Task<IActionResult> CreateJobOffer([FromBody] JobOfferCreateDto dto)
         {
-            try
-            {
-                var userId = Guid.Parse(User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier).Value);
-                var jobOffer = await _service.CreateJobOfferAsync(userId, dto);
+            var userId = Guid.Parse(User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier).Value);
+            var jobOffer = await _service.CreateJobOfferAsync(userId, dto);
 
-                var jobOfferResponse = new JobOfferResponseDto
-                {
-                    Id = jobOffer.Id,
-                    Position = jobOffer.Position,
-                    Employer = jobOffer.Employer,
-                    PlaceOfWork = jobOffer.PlaceOfWork,
-                    PayPerHour = jobOffer.PayPerHour,
-                    Status = jobOffer.Status,
-                    HousingProvided = jobOffer.HousingProvided,
-                    HousingCostPerWeek = jobOffer.HousingCostPerWeek
-                };
-
-                return StatusCode(201, jobOfferResponse);
-            }
-            catch (InvalidOperationException ex)
+            var jobOfferResponse = new JobOfferResponseDto
             {
-                return BadRequest(ex.Message);
-            }
+                Id = jobOffer.Id,
+                Position = jobOffer.Position,
+                Employer = jobOffer.Employer,
+                PlaceOfWork = jobOffer.PlaceOfWork,
+                PayPerHour = jobOffer.PayPerHour,
+                Status = jobOffer.Status,
+                HousingProvided = jobOffer.HousingProvided,
+                HousingCostPerWeek = jobOffer.HousingCostPerWeek
+            };
+
+            return StatusCode(201, jobOfferResponse);
         }
 
         [HttpGet("GetJoByID")]

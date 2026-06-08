@@ -6,14 +6,9 @@ using WatApi.Security;
 
 namespace WatApi.Services
 {
-    public class UserService : WatApi.Services.Interfaces.IUserService
+    public class UserService(AppDbContext context) : WatApi.Services.Interfaces.IUserService
     {
-        private readonly AppDbContext _context;
-
-        public UserService(AppDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AppDbContext _context = context;
 
         public async Task<User> CreateUserAsync(UserRegistrationDto dto)
         {
