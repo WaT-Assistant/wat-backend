@@ -22,7 +22,20 @@ namespace WatApi.Controllers
             {
                 var userId = Guid.Parse(User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier).Value);
                 var jobOffer = await _service.CreateJobOfferAsync(userId, dto);
-                return StatusCode(201, jobOffer);
+
+                var jobOfferResponse = new JobOfferResponseDto
+                {
+                    Id = jobOffer.Id,
+                    Position = jobOffer.Position,
+                    Employer = jobOffer.Employer,
+                    PlaceOfWork = jobOffer.PlaceOfWork,
+                    PayPerHour = jobOffer.PayPerHour,
+                    Status = jobOffer.Status,
+                    HousingProvided = jobOffer.HousingProvided,
+                    HousingCostPerWeek = jobOffer.HousingCostPerWeek
+                };
+
+                return StatusCode(201, jobOfferResponse);
             }
             catch (InvalidOperationException ex)
             {
@@ -37,9 +50,6 @@ namespace WatApi.Controllers
             var userId = Guid.Parse(userIdString!);
             var jobOffer = await _service.GetJobOfferByUserIdAsync(userId);
 
-            if (jobOffer == null)
-                return NotFound("No job offer found for the user.");
-
             var jobOfferResponse = new JobOfferResponseDto
             {
                 Id = jobOffer.Id,
@@ -51,14 +61,13 @@ namespace WatApi.Controllers
                 HousingProvided = jobOffer.HousingProvided,
                 HousingCostPerWeek = jobOffer.HousingCostPerWeek
             };
+
             return Ok(jobOfferResponse);
         }
 
         [HttpPut("UpdateJo")]
         public async Task<IActionResult> UpdateJobOffer([FromBody] JobOfferUpdateDto dto)
         {
-            try
-            {
                 var userId = Guid.Parse(User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier).Value);
 
                 var updatedOffer = await _service.UpdateJobOfferAsync(userId, dto);
@@ -74,11 +83,6 @@ namespace WatApi.Controllers
                     HousingCostPerWeek = updatedOffer.HousingCostPerWeek
                 };
                 return Ok(updatedOffer);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
         }
 
         [HttpDelete("DeleteJo")]

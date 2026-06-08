@@ -47,8 +47,11 @@ namespace WatApi.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<JobOffer?> GetJobOfferByUserIdAsync(Guid userId) => 
-            await _context.JobOffers.FirstOrDefaultAsync(jo => jo.UserId == userId);
+        public async Task<JobOffer?> GetJobOfferByUserIdAsync(Guid userId)
+        {
+            var offer = await _context.JobOffers.FirstOrDefaultAsync(jo => jo.UserId == userId);
+            return offer ?? throw new KeyNotFoundException("Job offer not found for the user.");
+        }
 
         public async Task<JobOffer> UpdateJobOfferAsync(Guid userId, JobOfferUpdateDto dto)
         {
