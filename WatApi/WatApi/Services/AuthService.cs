@@ -1,7 +1,9 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using WatApi.Config;
 using WatApi.DTO.User;
 using WatApi.Models;
 using WatApi.Security;
@@ -12,38 +14,40 @@ namespace WatApi.Services
     public class AuthService : IAuthService
     {
         private readonly IUserService _userService;
-        private readonly IConfiguration _configuration;
+        private readonly JwtSettings _jwtSettings;
 
-        public AuthService(IUserService userService, IConfiguration configuration)
+        public AuthService(IUserService userService, IOptions<JwtSettings> jwtOptions)
         {
             _userService = userService;
-            _configuration = configuration;
+            _jwtSettings = jwtOptions.Value;
         }
 
         public async Task<string> LoginAsync(UserLoginDto dto)
         {
             var user = await _userService.GetUserByEmailAsync(dto.Email);
             if (user == null || !PasswordHasher.Verify(dto.Password, user.PasswordHash))
-                throw new Exception("Invalid email or password");
+                throw new InvalidOperationException("Invalid email or password");
             return GenerateJWT(user);
         }
 
-        private string GenerateJWT(User user) {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+        private string GenerateJWT(User user)
+        {
+            var key = _jwtSettings.Key ?? throw new InvalidOperationException("JWT key is not configured.");
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("FullName", user.FullName)
+                new Claim("FullName", user.FullName ?? string.Empty)
             };
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddHours(2),
+                expires: DateTime.UtcNow.AddHours(_jwtSettings.ExpiryHours),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

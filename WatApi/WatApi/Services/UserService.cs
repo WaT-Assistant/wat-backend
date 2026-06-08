@@ -17,6 +17,8 @@ namespace WatApi.Services
 
         public async Task<User> CreateUserAsync(UserRegistrationDto dto)
         {
+            if (await GetUserByEmailAsync(dto.EmailAddress) != null)
+                throw new InvalidOperationException("This email adress already exists!");
             User user = new()
             {
                 Id = Guid.NewGuid(),

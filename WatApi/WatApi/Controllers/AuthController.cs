@@ -24,9 +24,6 @@ namespace WatApi.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] UserRegistrationDto dto)
         {
-            if (await _service.GetUserByEmailAsync(dto.EmailAddress) != null)
-                return BadRequest("This email adress already exists!");
-
             User user = await _service.CreateUserAsync(dto);
             var userResponse = new UserResponseDto
             {
@@ -41,15 +38,8 @@ namespace WatApi.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
         {
-            try
-            {
                 string token = await _authService.LoginAsync(dto);
                 return Ok(new { Token = token });
-            }
-            catch (Exception ex)
-            {
-                return Unauthorized(ex.Message);
-            }
         }
     }
 }
