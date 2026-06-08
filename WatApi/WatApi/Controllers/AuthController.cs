@@ -10,16 +10,10 @@ namespace WatApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController(IUserService service, IAuthService authService) : ControllerBase
     {
-        private readonly WatApi.Services.Interfaces.IUserService _service;
-        private readonly WatApi.Services.Interfaces.IAuthService _authService;
-
-        public AuthController(IUserService service, IAuthService authService)
-        {
-            _service = service;
-            _authService = authService;
-        }
+        private readonly IUserService _service = service;
+        private readonly IAuthService _authService = authService;
 
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] UserRegistrationDto dto)

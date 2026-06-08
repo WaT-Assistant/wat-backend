@@ -11,14 +11,9 @@ namespace WatApi.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class JobOfferController : ControllerBase
+    public class JobOfferController(IJobOfferService service) : ControllerBase
     {
-        private readonly WatApi.Services.Interfaces.IJobOfferService _service;
-
-        public JobOfferController(IJobOfferService service)
-        {
-            _service = service;
-        }
+        private readonly IJobOfferService _service = service;
 
         [HttpPost("CreateJo")]
         public async Task<IActionResult> CreateJobOffer([FromBody] JobOfferCreateDto dto)
@@ -84,6 +79,13 @@ namespace WatApi.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpDelete("DeleteJo")]
+        public async Task<IActionResult> DeleteJobOffer(Guid id)
+        {
+            await _service.DeleteJobOfferAsync(id);
+            return NoContent();
         }
     }
 }
