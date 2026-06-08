@@ -37,6 +37,16 @@ namespace WatApi.Services
             return jobOffer;
         }
 
+        public async Task DeleteJobOfferAsync(Guid id)
+        {
+            var offer = await _context.JobOffers.FindAsync(id);
+            if (offer == null)
+                throw new KeyNotFoundException("Job offer not found for the user.");
+
+            _context.JobOffers.Remove(offer);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<JobOffer?> GetJobOfferByUserIdAsync(Guid userId) => 
             await _context.JobOffers.FirstOrDefaultAsync(jo => jo.UserId == userId);
 

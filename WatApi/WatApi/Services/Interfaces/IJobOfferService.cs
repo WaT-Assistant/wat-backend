@@ -8,5 +8,6 @@ namespace WatApi.Services.Interfaces
         Task<JobOffer> CreateJobOfferAsync(Guid userId, JobOfferCreateDto dto);
         Task<JobOffer?> GetJobOfferByUserIdAsync(Guid userId);
         Task<JobOffer> UpdateJobOfferAsync(Guid userId, JobOfferUpdateDto dto);
+        Task DeleteJobOfferAsync(Guid id);
     }
 }
