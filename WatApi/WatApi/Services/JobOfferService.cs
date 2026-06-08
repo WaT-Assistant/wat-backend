@@ -12,10 +12,6 @@ namespace WatApi.Services
 
         public async Task<JobOffer> CreateJobOfferAsync(Guid userId, JobOfferCreateDto dto)
         {
-            var offer = await _context.JobOffers.FirstOrDefaultAsync(jo => jo.UserId == userId);
-            if (offer != null)
-                throw new InvalidOperationException("This user already has a job offer.");
-
             var jobOffer = new JobOffer()
             {
                 UserId = userId,
@@ -34,24 +30,29 @@ namespace WatApi.Services
 
         public async Task DeleteJobOfferAsync(Guid id)
         {
-            var offer = await _context.JobOffers.FindAsync(id);
-            if (offer == null)
+            var offer = await _context.JobOffers.FindAsync(id) ?? 
                 throw new KeyNotFoundException("Job offer not found for the user.");
 
             _context.JobOffers.Remove(offer);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<JobOffer?> GetJobOfferByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<JobOffer>> GetAllJobOffersAsync(Guid userId) =>
+            await _context.JobOffers
+        .Where(jo => jo.UserId == userId)
+        .ToListAsync();
+
+        public async Task<JobOffer> GetJobOfferByIdAsync(Guid offerId)
         {
-            var offer = await _context.JobOffers.FirstOrDefaultAsync(jo => jo.UserId == userId);
-            return offer ?? throw new KeyNotFoundException("Job offer not found for the user.");
+            var offer = await _context.JobOffers.FindAsync(offerId);
+            return offer ?? throw new KeyNotFoundException("Job offer not found.");
         }
 
-        public async Task<JobOffer> UpdateJobOfferAsync(Guid userId, JobOfferUpdateDto dto)
+        public async Task<JobOffer> UpdateJobOfferAsync(Guid offerId, Guid userId, JobOfferUpdateDto dto)
         {
-            var offer = await GetJobOfferByUserIdAsync(userId) ?? 
-                throw new InvalidOperationException("Job offer not found for the user.");
+            var offer = await GetJobOfferByIdAsync(offerId);
+            if (offer.UserId != userId)
+                throw new UnauthorizedAccessException("You do not have permission to update this job offer.");
 
             offer.Position = dto.Position;
             offer.Employer = dto.Employer;
