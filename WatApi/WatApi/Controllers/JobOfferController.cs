@@ -37,11 +37,9 @@ namespace WatApi.Controllers
         }
 
         [HttpGet("GetJoByID")]
-        public async Task<IActionResult> GetJobOffer()
+        public async Task<IActionResult> GetJobOffer(Guid offerId)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userId = Guid.Parse(userIdString!);
-            var jobOffer = await _service.GetJobOfferByUserIdAsync(userId);
+            var jobOffer = await _service.GetJobOfferByIdAsync(offerId);
 
             var jobOfferResponse = new JobOfferResponseDto
             {
@@ -58,12 +56,32 @@ namespace WatApi.Controllers
             return Ok(jobOfferResponse);
         }
 
+        [HttpGet("GetAllJo")]
+        public async Task<IActionResult> GetAllJobOffers()
+        {
+            var jobOffers = await _service.GetAllJobOffersAsync(Guid.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!));
+            var jobOfferResponses = jobOffers.Select(jo => new JobOfferResponseDto
+            {
+                Id = jo.Id,
+                Position = jo.Position,
+                Employer = jo.Employer,
+                PlaceOfWork = jo.PlaceOfWork,
+                PayPerHour = jo.PayPerHour,
+                Status = jo.Status,
+                HousingProvided = jo.HousingProvided,
+                HousingCostPerWeek = jo.HousingCostPerWeek
+            }).ToList();
+            return Ok(jobOfferResponses);
+        }
+
         [HttpPut("UpdateJo")]
-        public async Task<IActionResult> UpdateJobOffer([FromBody] JobOfferUpdateDto dto)
+        public async Task<IActionResult> UpdateJobOffer(Guid offerId, [FromBody] JobOfferUpdateDto dto)
         {
                 var userId = Guid.Parse(User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier).Value);
 
-                var updatedOffer = await _service.UpdateJobOfferAsync(userId, dto);
+                var updatedOffer = await _service.UpdateJobOfferAsync(offerId, userId, dto);
+
                 var jobOfferResponse = new JobOfferResponseDto
                 {
                     Id = updatedOffer.Id,
@@ -75,7 +93,7 @@ namespace WatApi.Controllers
                     HousingProvided = updatedOffer.HousingProvided,
                     HousingCostPerWeek = updatedOffer.HousingCostPerWeek
                 };
-                return Ok(updatedOffer);
+                return Ok(jobOfferResponse);
         }
 
         [HttpDelete("DeleteJo")]

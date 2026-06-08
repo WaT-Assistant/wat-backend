@@ -14,9 +14,9 @@ namespace WatApi.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<User>()
-                .HasOne(u => u.JobOffer)
+                .HasMany(u => u.JobOffer)
                 .WithOne(u => u.User)
-                .HasForeignKey<JobOffer>(j => j.UserId)
+                .HasForeignKey(j => j.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<JobOffer>()

@@ -6,8 +6,9 @@ namespace WatApi.Services.Interfaces
     public interface IJobOfferService
     {
         Task<JobOffer> CreateJobOfferAsync(Guid userId, JobOfferCreateDto dto);
-        Task<JobOffer?> GetJobOfferByUserIdAsync(Guid userId);
-        Task<JobOffer> UpdateJobOfferAsync(Guid userId, JobOfferUpdateDto dto);
+        Task<JobOffer> GetJobOfferByIdAsync(Guid offerId);
+        Task<IEnumerable<JobOffer>> GetAllJobOffersAsync(Guid userId);
+        Task<JobOffer> UpdateJobOfferAsync(Guid offerId, Guid userId, JobOfferUpdateDto dto);
         Task DeleteJobOfferAsync(Guid id);
     }
 }
