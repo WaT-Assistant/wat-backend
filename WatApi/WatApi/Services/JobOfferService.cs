@@ -21,6 +21,7 @@ namespace WatApi.Services
                 PayPerHour = dto.PayPerHour,
                 HousingProvided = dto.HousingProvided,
                 HousingCostPerWeek = dto.HousingCostPerWeek,
+                Year = dto.Year,
             };
 
             _context.JobOffers.Add(jobOffer);
@@ -61,6 +62,7 @@ namespace WatApi.Services
             offer.HousingProvided = dto.HousingProvided;
             offer.HousingCostPerWeek = dto.HousingCostPerWeek;
             offer.Status = dto.Status;
+            offer.Year = dto.Year;
 
             await _context.SaveChangesAsync();
             return offer;

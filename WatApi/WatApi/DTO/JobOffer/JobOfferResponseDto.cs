@@ -12,5 +12,6 @@ namespace WatApi.DTO.JobOffer
         public bool HousingProvided { get; set; }
         public decimal? HousingCostPerWeek { get; set; }
         public JobOfferStatus Status { get; set; }
+        public int Year { get; set; }
     }
 }
