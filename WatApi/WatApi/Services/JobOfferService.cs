@@ -49,6 +49,23 @@ namespace WatApi.Services
             return offer ?? throw new KeyNotFoundException("Job offer not found.");
         }
 
+        public async Task<JobOffer> PublishJobOfferAsync(Guid offerId, Guid userId, JobOfferPublishDto dto)
+        {
+            var offer = await GetJobOfferByIdAsync(offerId);
+            if (offer.UserId != userId)
+                throw new UnauthorizedAccessException
+                    ("You do not have permission to publish this job offer.");
+            if(offer.IsPublished)
+                throw new InvalidOperationException("This job offer is already published.");
+
+            offer.IsPublished = true;
+            offer.Feedback = dto.Feedback;
+            offer.Rating = dto.Rating;
+
+            await _context.SaveChangesAsync();
+            return offer;
+        }
+
         public async Task<JobOffer> UpdateJobOfferAsync(Guid offerId, Guid userId, JobOfferUpdateDto dto)
         {
             var offer = await GetJobOfferByIdAsync(offerId);

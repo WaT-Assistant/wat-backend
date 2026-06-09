@@ -13,5 +13,8 @@
         public bool HousingProvided { get; set; } = false;
         public decimal? HousingCostPerWeek { get; set; }
         public int Year { get; set; }
+        public bool IsPublished { get; set; } = false;
+        public string? Feedback { get; set; }
+        public int? Rating { get; set; }
     }
 }

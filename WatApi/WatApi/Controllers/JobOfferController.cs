@@ -31,13 +31,16 @@ namespace WatApi.Controllers
                 Status = jobOffer.Status,
                 HousingProvided = jobOffer.HousingProvided,
                 HousingCostPerWeek = jobOffer.HousingCostPerWeek,
-                Year = jobOffer.Year
+                Year = jobOffer.Year,
+                IsPublished = jobOffer.IsPublished,
+                Feedback = jobOffer.Feedback,
+                Rating = jobOffer.Rating
             };
 
             return StatusCode(201, jobOfferResponse);
         }
 
-        [HttpGet("GetJoByID")]
+        [HttpGet("{offerId}/GetJoByID")]
         public async Task<IActionResult> GetJobOffer(Guid offerId)
         {
             var jobOffer = await _service.GetJobOfferByIdAsync(offerId);
@@ -52,7 +55,10 @@ namespace WatApi.Controllers
                 Status = jobOffer.Status,
                 HousingProvided = jobOffer.HousingProvided,
                 HousingCostPerWeek = jobOffer.HousingCostPerWeek,
-                Year = jobOffer.Year
+                Year = jobOffer.Year,
+                IsPublished = jobOffer.IsPublished,
+                Feedback = jobOffer.Feedback,
+                Rating = jobOffer.Rating
             };
 
             return Ok(jobOfferResponse);
@@ -73,38 +79,70 @@ namespace WatApi.Controllers
                 Status = jo.Status,
                 HousingProvided = jo.HousingProvided,
                 HousingCostPerWeek = jo.HousingCostPerWeek,
-                Year = jo.Year
+                Year = jo.Year,
+                IsPublished = jo.IsPublished,
+                Feedback = jo.Feedback,
+                Rating = jo.Rating
             }).ToList();
             return Ok(jobOfferResponses);
         }
 
-        [HttpPut("UpdateJo")]
+        [HttpPut("{offerId}/UpdateJo")]
         public async Task<IActionResult> UpdateJobOffer(Guid offerId, [FromBody] JobOfferUpdateDto dto)
         {
-                var userId = Guid.Parse(User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier).Value);
+            var userId = Guid.Parse(User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier).Value);
 
-                var updatedOffer = await _service.UpdateJobOfferAsync(offerId, userId, dto);
+            var updatedOffer = await _service.UpdateJobOfferAsync(offerId, userId, dto);
 
-                var jobOfferResponse = new JobOfferResponseDto
-                {
-                    Id = updatedOffer.Id,
-                    Position = updatedOffer.Position,
-                    Employer = updatedOffer.Employer,
-                    PlaceOfWork = updatedOffer.PlaceOfWork,
-                    PayPerHour = updatedOffer.PayPerHour,
-                    Status = updatedOffer.Status,
-                    HousingProvided = updatedOffer.HousingProvided,
-                    HousingCostPerWeek = updatedOffer.HousingCostPerWeek,
-                    Year = updatedOffer.Year
-                };
-                return Ok(jobOfferResponse);
+            var jobOfferResponse = new JobOfferResponseDto
+            {
+                Id = updatedOffer.Id,
+                Position = updatedOffer.Position,
+                Employer = updatedOffer.Employer,
+                PlaceOfWork = updatedOffer.PlaceOfWork,
+                PayPerHour = updatedOffer.PayPerHour,
+                Status = updatedOffer.Status,
+                HousingProvided = updatedOffer.HousingProvided,
+                HousingCostPerWeek = updatedOffer.HousingCostPerWeek,
+                Year = updatedOffer.Year,
+                IsPublished = updatedOffer.IsPublished,
+                Feedback = updatedOffer.Feedback,
+                Rating = updatedOffer.Rating
+            };
+            return Ok(jobOfferResponse);
         }
 
-        [HttpDelete("DeleteJo")]
+        [HttpDelete("{id}/DeleteJo")]
         public async Task<IActionResult> DeleteJobOffer(Guid id)
         {
             await _service.DeleteJobOfferAsync(id);
             return NoContent();
+        }
+
+        [HttpPut("{id}/PublishJo")]
+        public async Task<IActionResult> PublishJobOffer(Guid id, [FromBody] 
+        JobOfferPublishDto dto)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var publishedOffer = await _service.PublishJobOfferAsync(id, userId, dto);
+
+            var jobOfferResponse = new JobOfferResponseDto
+            {
+                Id = publishedOffer.Id,
+                Position = publishedOffer.Position,
+                Employer = publishedOffer.Employer,
+                PlaceOfWork = publishedOffer.PlaceOfWork,
+                PayPerHour = publishedOffer.PayPerHour,
+                Status = publishedOffer.Status,
+                HousingProvided = publishedOffer.HousingProvided,
+                HousingCostPerWeek = publishedOffer.HousingCostPerWeek,
+                Year = publishedOffer.Year,
+                IsPublished = publishedOffer.IsPublished,
+                Feedback = publishedOffer.Feedback,
+                Rating = publishedOffer.Rating
+            };
+
+            return Ok(jobOfferResponse);
         }
     }
 }
