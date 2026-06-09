@@ -30,7 +30,8 @@ namespace WatApi.Controllers
                 PayPerHour = jobOffer.PayPerHour,
                 Status = jobOffer.Status,
                 HousingProvided = jobOffer.HousingProvided,
-                HousingCostPerWeek = jobOffer.HousingCostPerWeek
+                HousingCostPerWeek = jobOffer.HousingCostPerWeek,
+                Year = jobOffer.Year
             };
 
             return StatusCode(201, jobOfferResponse);
@@ -50,7 +51,8 @@ namespace WatApi.Controllers
                 PayPerHour = jobOffer.PayPerHour,
                 Status = jobOffer.Status,
                 HousingProvided = jobOffer.HousingProvided,
-                HousingCostPerWeek = jobOffer.HousingCostPerWeek
+                HousingCostPerWeek = jobOffer.HousingCostPerWeek,
+                Year = jobOffer.Year
             };
 
             return Ok(jobOfferResponse);
@@ -70,7 +72,8 @@ namespace WatApi.Controllers
                 PayPerHour = jo.PayPerHour,
                 Status = jo.Status,
                 HousingProvided = jo.HousingProvided,
-                HousingCostPerWeek = jo.HousingCostPerWeek
+                HousingCostPerWeek = jo.HousingCostPerWeek,
+                Year = jo.Year
             }).ToList();
             return Ok(jobOfferResponses);
         }
@@ -91,7 +94,8 @@ namespace WatApi.Controllers
                     PayPerHour = updatedOffer.PayPerHour,
                     Status = updatedOffer.Status,
                     HousingProvided = updatedOffer.HousingProvided,
-                    HousingCostPerWeek = updatedOffer.HousingCostPerWeek
+                    HousingCostPerWeek = updatedOffer.HousingCostPerWeek,
+                    Year = updatedOffer.Year
                 };
                 return Ok(jobOfferResponse);
         }
