@@ -16,5 +16,6 @@
         public bool IsPublished { get; set; } = false;
         public string? Feedback { get; set; }
         public int? Rating { get; set; }
+        public ImportantInfo? ImportantInfo { get; set; }
     }
 }

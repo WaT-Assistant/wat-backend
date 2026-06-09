@@ -50,6 +50,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJobOfferService, JobOfferService>();
+builder.Services.AddScoped<IImportantInfoService, ImportantInfoService>();
 
 // Authentication setup (reads from configuration)
 var key = builder.Configuration["Jwt:Key"];

@@ -8,6 +8,7 @@ namespace WatApi.Data
         public AppDbContext(DbContextOptions<AppDbContext> options): base(options) { }
         public DbSet<User> Users { get; set; }
         public DbSet<JobOffer> JobOffers { get; set; }
+        public DbSet<ImportantInfo> ImportantInfos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,6 +23,12 @@ namespace WatApi.Data
             modelBuilder.Entity<JobOffer>()
             .Property(j => j.Status)
             .HasConversion<string>();
+
+            modelBuilder.Entity<JobOffer>()
+                .HasOne(j => j.ImportantInfo)
+                .WithOne(i => i.JobOffer)
+                .HasForeignKey<ImportantInfo>(i => i.JobOfferId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
