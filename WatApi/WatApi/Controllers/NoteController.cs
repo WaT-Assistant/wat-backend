@@ -62,5 +62,30 @@ namespace WatApi.Controllers
             });
             return Ok(response);
         }
+
+        [HttpPut("{noteId}")]
+        public async Task<IActionResult> UpdateNote(Guid noteId, [FromBody] NoteUpdateDto dto)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var updatedNote = await _noteService.UpdateNoteAsync(dto, noteId, userId);
+
+            var response = new NoteResponseDto
+            {
+                Id = updatedNote.Id,
+                Text = updatedNote.Text,
+                ColorHex = updatedNote.ColorHex,
+                CreatedAt = updatedNote.CreatedAt
+            };
+            return Ok(response);
+        }
+
+        [HttpDelete("{noteId}")]
+        public async Task<IActionResult> DeleteNote(Guid noteId)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            await _noteService.DeleteNoteAsync(noteId, userId);
+
+            return NoContent();
+        }
     }
 }

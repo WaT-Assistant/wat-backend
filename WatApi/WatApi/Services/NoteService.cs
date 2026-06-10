@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using WatApi.Data;
 using WatApi.DTO.Note;
 using WatApi.Models;
@@ -30,7 +31,12 @@ namespace WatApi.Services
 
         public async Task DeleteNoteAsync(Guid noteId, Guid userId)
         {
-            throw new NotImplementedException();
+            var note = await _context.Notes.FirstOrDefaultAsync
+                (n => n.Id == noteId && n.UserId == userId) ?? 
+                throw new KeyNotFoundException("Note not found for you.");
+
+            _context.Notes.Remove(note);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Note>> GetAllNotesAsync(Guid userId) =>
@@ -48,7 +54,15 @@ namespace WatApi.Services
 
         public async Task<Note> UpdateNoteAsync(NoteUpdateDto dto, Guid noteId, Guid userId)
         {
-            throw new NotImplementedException();
+            var note = await _context.Notes
+                .FirstOrDefaultAsync(n => n.Id == noteId && n.UserId == userId) ?? 
+                throw new KeyNotFoundException("Note not found for you.");
+
+            note.Text = dto.Text;
+            note.ColorHex = dto.ColorHex;
+
+            await _context.SaveChangesAsync();
+            return note;
         }
     }
 }
