@@ -15,7 +15,7 @@ namespace WatApi.Controllers
     {
         private readonly IJobOfferService _service = service;
 
-        [HttpPost("CreateJo")]
+        [HttpPost]
         public async Task<IActionResult> CreateJobOffer([FromBody] JobOfferCreateDto dto)
         {
             var userId = Guid.Parse(User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier).Value);
@@ -40,7 +40,7 @@ namespace WatApi.Controllers
             return StatusCode(201, jobOfferResponse);
         }
 
-        [HttpGet("{offerId}/GetJoByID")]
+        [HttpGet("{offerId}")]
         public async Task<IActionResult> GetJobOffer(Guid offerId)
         {
             var jobOffer = await _service.GetJobOfferByIdAsync(offerId);
@@ -64,7 +64,7 @@ namespace WatApi.Controllers
             return Ok(jobOfferResponse);
         }
 
-        [HttpGet("GetAllJo")]
+        [HttpGet]
         public async Task<IActionResult> GetAllJobOffers()
         {
             var jobOffers = await _service.GetAllJobOffersAsync(Guid.Parse(
@@ -87,7 +87,7 @@ namespace WatApi.Controllers
             return Ok(jobOfferResponses);
         }
 
-        [HttpPut("{offerId}/UpdateJo")]
+        [HttpPut("{offerId}")]
         public async Task<IActionResult> UpdateJobOffer(Guid offerId, [FromBody] JobOfferUpdateDto dto)
         {
             var userId = Guid.Parse(User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier).Value);
@@ -112,14 +112,14 @@ namespace WatApi.Controllers
             return Ok(jobOfferResponse);
         }
 
-        [HttpDelete("{id}/DeleteJo")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteJobOffer(Guid id)
         {
             await _service.DeleteJobOfferAsync(id);
             return NoContent();
         }
 
-        [HttpPut("{id}/PublishJo")]
+        [HttpPut("{id}/publish")]
         public async Task<IActionResult> PublishJobOffer(Guid id, [FromBody] 
         JobOfferPublishDto dto)
         {
