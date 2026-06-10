@@ -54,9 +54,6 @@ namespace WatApi.Services
         public async Task<JobOffer> PublishJobOfferAsync(Guid offerId, Guid userId, JobOfferPublishDto dto)
         {
             var offer = await GetJobOfferByIdAsync(offerId, userId);
-            if (offer.UserId != userId)
-                throw new UnauthorizedAccessException
-                    ("You do not have permission to publish this job offer.");
             if(offer.IsPublished)
                 throw new InvalidOperationException("This job offer is already published.");
 
@@ -71,9 +68,7 @@ namespace WatApi.Services
         public async Task<JobOffer> UpdateJobOfferAsync(Guid offerId, Guid userId, JobOfferUpdateDto dto)
         {
             var offer = await GetJobOfferByIdAsync(offerId, userId);
-            if (offer.UserId != userId)
-                throw new UnauthorizedAccessException("You do not have permission to update this job offer.");
-
+           
             offer.Position = dto.Position;
             offer.Employer = dto.Employer;
             offer.PlaceOfWork = dto.PlaceOfWork;

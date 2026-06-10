@@ -21,23 +21,7 @@ namespace WatApi.Controllers
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var jobOffer = await _service.CreateJobOfferAsync(userId, dto);
 
-            var jobOfferResponse = new JobOfferResponseDto
-            {
-                Id = jobOffer.Id,
-                Position = jobOffer.Position,
-                Employer = jobOffer.Employer,
-                PlaceOfWork = jobOffer.PlaceOfWork,
-                PayPerHour = jobOffer.PayPerHour,
-                Status = jobOffer.Status,
-                HousingProvided = jobOffer.HousingProvided,
-                HousingCostPerWeek = jobOffer.HousingCostPerWeek,
-                Year = jobOffer.Year,
-                IsPublished = jobOffer.IsPublished,
-                Feedback = jobOffer.Feedback,
-                Rating = jobOffer.Rating
-            };
-
-            return StatusCode(201, jobOfferResponse);
+            return StatusCode(201, MapToDto(jobOffer));
         }
 
         [HttpGet("{offerId}")]
@@ -46,23 +30,7 @@ namespace WatApi.Controllers
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var jobOffer = await _service.GetJobOfferByIdAsync(offerId, userId);
 
-            var jobOfferResponse = new JobOfferResponseDto
-            {
-                Id = jobOffer.Id,
-                Position = jobOffer.Position,
-                Employer = jobOffer.Employer,
-                PlaceOfWork = jobOffer.PlaceOfWork,
-                PayPerHour = jobOffer.PayPerHour,
-                Status = jobOffer.Status,
-                HousingProvided = jobOffer.HousingProvided,
-                HousingCostPerWeek = jobOffer.HousingCostPerWeek,
-                Year = jobOffer.Year,
-                IsPublished = jobOffer.IsPublished,
-                Feedback = jobOffer.Feedback,
-                Rating = jobOffer.Rating
-            };
-
-            return Ok(jobOfferResponse);
+            return Ok(MapToDto(jobOffer));
         }
 
         [HttpGet]
@@ -70,22 +38,7 @@ namespace WatApi.Controllers
         {
             var jobOffers = await _service.GetAllJobOffersAsync(Guid.Parse(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!));
-            var jobOfferResponses = jobOffers.Select(jo => new JobOfferResponseDto
-            {
-                Id = jo.Id,
-                Position = jo.Position,
-                Employer = jo.Employer,
-                PlaceOfWork = jo.PlaceOfWork,
-                PayPerHour = jo.PayPerHour,
-                Status = jo.Status,
-                HousingProvided = jo.HousingProvided,
-                HousingCostPerWeek = jo.HousingCostPerWeek,
-                Year = jo.Year,
-                IsPublished = jo.IsPublished,
-                Feedback = jo.Feedback,
-                Rating = jo.Rating
-            }).ToList();
-            return Ok(jobOfferResponses);
+            return Ok(jobOffers.Select(MapToDto));
         }
 
         [HttpPut("{offerId}")]
@@ -94,22 +47,7 @@ namespace WatApi.Controllers
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var updatedOffer = await _service.UpdateJobOfferAsync(offerId, userId, dto);
 
-            var jobOfferResponse = new JobOfferResponseDto
-            {
-                Id = updatedOffer.Id,
-                Position = updatedOffer.Position,
-                Employer = updatedOffer.Employer,
-                PlaceOfWork = updatedOffer.PlaceOfWork,
-                PayPerHour = updatedOffer.PayPerHour,
-                Status = updatedOffer.Status,
-                HousingProvided = updatedOffer.HousingProvided,
-                HousingCostPerWeek = updatedOffer.HousingCostPerWeek,
-                Year = updatedOffer.Year,
-                IsPublished = updatedOffer.IsPublished,
-                Feedback = updatedOffer.Feedback,
-                Rating = updatedOffer.Rating
-            };
-            return Ok(jobOfferResponse);
+            return Ok(MapToDto(updatedOffer));
         }
 
         [HttpDelete("{id}")]
@@ -117,6 +55,7 @@ namespace WatApi.Controllers
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             await _service.DeleteJobOfferAsync(id, userId);
+
             return NoContent();
         }
 
@@ -126,24 +65,26 @@ namespace WatApi.Controllers
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var publishedOffer = await _service.PublishJobOfferAsync(id, userId, dto);
+            return Ok(MapToDto(publishedOffer));
+        }
 
-            var jobOfferResponse = new JobOfferResponseDto
+        private static JobOfferResponseDto MapToDto(JobOffer offer)
+        {
+            return new JobOfferResponseDto
             {
-                Id = publishedOffer.Id,
-                Position = publishedOffer.Position,
-                Employer = publishedOffer.Employer,
-                PlaceOfWork = publishedOffer.PlaceOfWork,
-                PayPerHour = publishedOffer.PayPerHour,
-                Status = publishedOffer.Status,
-                HousingProvided = publishedOffer.HousingProvided,
-                HousingCostPerWeek = publishedOffer.HousingCostPerWeek,
-                Year = publishedOffer.Year,
-                IsPublished = publishedOffer.IsPublished,
-                Feedback = publishedOffer.Feedback,
-                Rating = publishedOffer.Rating
+                Id = offer.Id,
+                Position = offer.Position,
+                Employer = offer.Employer,
+                PlaceOfWork = offer.PlaceOfWork,
+                PayPerHour = offer.PayPerHour,
+                Status = offer.Status,
+                HousingProvided = offer.HousingProvided,
+                HousingCostPerWeek = offer.HousingCostPerWeek,
+                Year = offer.Year,
+                IsPublished = offer.IsPublished,
+                Feedback = offer.Feedback,
+                Rating = offer.Rating
             };
-
-            return Ok(jobOfferResponse);
         }
     }
 }
