@@ -8,13 +8,20 @@ using WatApi.Middleware;
 using WatApi.Services;
 using WatApi.Services.Interfaces;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options; 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Bind JWT settings
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 
-// Add services to the container.
+// --- Rate limiting services: memory cache + options ---
+builder.Services.AddMemoryCache();
+builder.Services.Configure<RateLimitOptions>(builder.Configuration.GetSection("RateLimiting"));
+// -----------------------------------------------------
+
+// Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -72,11 +79,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!))
         };
     });
-  
+
 var app = builder.Build();
 
 // Use global exception middleware early so it catches everything
 app.UseMiddleware<ExceptionMiddleware>();
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -90,6 +98,10 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Apply rate limiting early so abusive requests are rejected quickly
+app.UseMiddleware<RateLimitingMiddleware>();
+
 app.MapControllers();
+
 
 app.Run();
