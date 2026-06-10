@@ -30,5 +30,37 @@ namespace WatApi.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetNoteByUserId(Guid Id)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var note = await _noteService.GetNoteByIdAsync(Id, userId);
+
+            var response = new NoteResponseDto
+            {
+                Id = note.Id,
+                Text = note.Text,
+                ColorHex = note.ColorHex,
+                CreatedAt = note.CreatedAt
+            };
+            return Ok(response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllNotes()
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var notes = await _noteService.GetAllNotesAsync(userId);
+
+            var response = notes.Select(note => new NoteResponseDto
+            {
+                Id = note.Id,
+                Text = note.Text,
+                ColorHex = note.ColorHex,
+                CreatedAt = note.CreatedAt
+            });
+            return Ok(response);
+        }
     }
 }
