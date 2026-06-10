@@ -1,0 +1,6 @@
+@WatApi_HostAddress = http://localhost:5048
+
+GET {{WatApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
