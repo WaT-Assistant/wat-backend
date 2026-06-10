@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using WatApi.Data;
 using WatApi.DTO.ImportantInfo;
 using WatApi.Models;
@@ -50,7 +51,27 @@ namespace WatApi.Services
         public async Task<ImportantInfo> UpdateImportantInfoAsync(Guid userId, Guid jobOfferId,
             ImportantInfoUpdateDto dto)
         {
-            throw new NotImplementedException();
+            var offer = await _context.JobOffers.Include(jo => jo.ImportantInfo).FirstOrDefaultAsync(jo => jo.Id == jobOfferId) ?? throw new KeyNotFoundException("Job offer not found.");
+
+            if (offer.UserId != userId)
+                throw new UnauthorizedAccessException("You have no access to this offer!");
+            if(offer.ImportantInfo == null)
+            {
+                offer.ImportantInfo = new ImportantInfo
+                {
+                    Id = Guid.NewGuid(),
+                    JobOfferId = jobOfferId
+                };
+            }
+            
+            offer.ImportantInfo.SevisID = dto.SevisId;
+            offer.ImportantInfo.VisaAppointment = dto.VisaAppointment;
+            offer.ImportantInfo.Flight = dto.FlightDate;
+            offer.ImportantInfo.DS160 = dto.Ds160;
+            offer.ImportantInfo.DS2019 = dto.Ds2019;
+
+            await _context.SaveChangesAsync();
+            return offer.ImportantInfo;
         }
     }
 }

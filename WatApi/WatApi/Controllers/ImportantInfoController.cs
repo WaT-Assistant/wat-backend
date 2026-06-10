@@ -13,7 +13,7 @@ namespace WatApi.Controllers
     {
         private readonly IImportantInfoService _importantInfoService = importantInfoService;
 
-        [HttpPost("{offerId}/CreateIi")]
+        [HttpPost("{offerId}")]
         public async Task<IActionResult> CreateImportantInfo(Guid offerId, [FromBody] ImportantInfoCreateDto dto)
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -32,7 +32,7 @@ namespace WatApi.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{offerId}/GetIiById")]
+        [HttpGet("{offerId}")]
         public async Task<IActionResult> GetImportantInfoByOfferId(Guid offerId)
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -48,6 +48,24 @@ namespace WatApi.Controllers
                 FlightDate = importantInfo.Flight,
                 Ds160 = importantInfo.DS160,
                 Ds2019 = importantInfo.DS2019
+            };
+
+            return Ok(response);
+        }
+
+        [HttpPut("{offerId}")]
+        public async Task<IActionResult> UpdateImportantInfoByOfferId(Guid offerId, [FromBody] ImportantInfoUpdateDto dto)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var updatedInfo = await _importantInfoService.UpdateImportantInfoAsync(userId, offerId, dto);
+
+            var response = new ImportantInfoResponseDto
+            {
+                SevisId = updatedInfo.SevisID,
+                VisaAppointment = updatedInfo.VisaAppointment,
+                FlightDate = updatedInfo.Flight,
+                Ds160 = updatedInfo.DS160,
+                Ds2019 = updatedInfo.DS2019
             };
 
             return Ok(response);
