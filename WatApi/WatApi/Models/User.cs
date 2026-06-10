@@ -8,5 +8,6 @@
         public string FullName { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public ICollection<JobOffer> JobOffer { get; set; } = [];
+        public ICollection<Note> Notes { get; set; } = [];
     }
 }

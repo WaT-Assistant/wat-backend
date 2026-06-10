@@ -9,6 +9,7 @@ namespace WatApi.Data
         public DbSet<User> Users { get; set; }
         public DbSet<JobOffer> JobOffers { get; set; }
         public DbSet<ImportantInfo> ImportantInfos { get; set; }
+        public DbSet<Note> Notes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +29,11 @@ namespace WatApi.Data
                 .HasOne(j => j.ImportantInfo)
                 .WithOne(i => i.JobOffer)
                 .HasForeignKey<ImportantInfo>(i => i.JobOfferId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Notes)
+                .WithOne(n => n.User)
+                .HasForeignKey(n => n.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }
