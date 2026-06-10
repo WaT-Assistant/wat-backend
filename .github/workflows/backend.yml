@@ -25,8 +25,8 @@ jobs:
 
     # Step 3: Restore NuGet packages
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore WatApi/WatApi.sln
 
-    # Step 4: Compile the project in Release mode to ensure there are no build errors
+    # Step 4: Compile the project in Release mode
     - name: Build project
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build WatApi/WatApi.sln --no-restore --configuration Release
