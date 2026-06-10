@@ -33,17 +33,16 @@ namespace WatApi.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             var clientId = GetClientIdentifier(context);
-            Console.WriteLine($"[RateLimit] Клієнт: {clientId}, Ліміт: {_options.PermitLimit} шт на {_options.WindowSeconds} сек");
             var routePart = _options.PerRoute ? context.Request.Path.Value ?? "/" : string.Empty;
             var key = $"rl:{clientId}:{routePart}";
 
             var now = DateTime.UtcNow;
             var lockObj = _locks.GetOrAdd(key, _ => new object());
-            RateLimitEntry entry;
+            RateLimitEntry? entry;
 
             lock (lockObj)
             {
-                if (!_cache.TryGetValue(key, out entry))
+                if (!_cache.TryGetValue(key, out entry) || entry == null)
                 {
                     entry = new RateLimitEntry { Count = 1, WindowStart = now };
                     _cache.Set(key, entry, TimeSpan.FromSeconds(_options.WindowSeconds));
