@@ -37,9 +37,14 @@ namespace WatApi.Services
             return importantInfo;
         }
 
-        public async Task<ImportantInfo> GetImportantInfoByJobOfferIdAsync(Guid jobOfferId)
+        public async Task<ImportantInfo?> GetImportantInfoByJobOfferIdAsync(Guid jobOfferId, Guid userId)
         {
-            throw new NotImplementedException();
+            var offer = await _context.JobOffers.Include(jo => jo.ImportantInfo).FirstOrDefaultAsync(jo => jo.Id == jobOfferId) ?? throw new KeyNotFoundException("Job offer not found.");
+
+            if (offer.UserId != userId) 
+                throw new UnauthorizedAccessException("You have no access to this offer!");
+
+            return offer.ImportantInfo;
         }
 
         public async Task<ImportantInfo> UpdateImportantInfoAsync(Guid userId, Guid jobOfferId,

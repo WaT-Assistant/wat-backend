@@ -13,7 +13,7 @@ namespace WatApi.Controllers
     {
         private readonly IImportantInfoService _importantInfoService = importantInfoService;
 
-        [HttpPost("{offerId}")]
+        [HttpPost("{offerId}/CreateIi")]
         public async Task<IActionResult> CreateImportantInfo(Guid offerId, [FromBody] ImportantInfoCreateDto dto)
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -27,6 +27,27 @@ namespace WatApi.Controllers
                 FlightDate = createdInfo.Flight,
                 Ds160 = createdInfo.DS160,
                 Ds2019 = createdInfo.DS2019
+            };
+
+            return Ok(response);
+        }
+
+        [HttpGet("{offerId}/GetIiById")]
+        public async Task<IActionResult> GetImportantInfoByOfferId(Guid offerId)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var importantInfo = await _importantInfoService.
+                GetImportantInfoByJobOfferIdAsync(offerId, userId);
+
+            if (importantInfo == null) return NoContent();
+
+            var response = new ImportantInfoResponseDto
+            {
+                SevisId = importantInfo.SevisID,
+                VisaAppointment = importantInfo.VisaAppointment,
+                FlightDate = importantInfo.Flight,
+                Ds160 = importantInfo.DS160,
+                Ds2019 = importantInfo.DS2019
             };
 
             return Ok(response);
