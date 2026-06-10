@@ -29,9 +29,10 @@ namespace WatApi.Services
             return jobOffer;
         }
 
-        public async Task DeleteJobOfferAsync(Guid id)
+        public async Task DeleteJobOfferAsync(Guid id, Guid userId)
         {
-            var offer = await _context.JobOffers.FindAsync(id) ?? 
+            var offer = await _context.JobOffers.
+                FirstOrDefaultAsync(jo => jo.Id == id && jo.UserId == userId) ?? 
                 throw new KeyNotFoundException("Job offer not found for the user.");
 
             _context.JobOffers.Remove(offer);
@@ -43,15 +44,16 @@ namespace WatApi.Services
         .Where(jo => jo.UserId == userId)
         .ToListAsync();
 
-        public async Task<JobOffer> GetJobOfferByIdAsync(Guid offerId)
+        public async Task<JobOffer> GetJobOfferByIdAsync(Guid offerId, Guid userId)
         {
-            var offer = await _context.JobOffers.FindAsync(offerId);
+            var offer = await _context.JobOffers
+                .FirstOrDefaultAsync(jo => jo.Id == offerId && jo.UserId == userId);
             return offer ?? throw new KeyNotFoundException("Job offer not found.");
         }
 
         public async Task<JobOffer> PublishJobOfferAsync(Guid offerId, Guid userId, JobOfferPublishDto dto)
         {
-            var offer = await GetJobOfferByIdAsync(offerId);
+            var offer = await GetJobOfferByIdAsync(offerId, userId);
             if (offer.UserId != userId)
                 throw new UnauthorizedAccessException
                     ("You do not have permission to publish this job offer.");
@@ -68,7 +70,7 @@ namespace WatApi.Services
 
         public async Task<JobOffer> UpdateJobOfferAsync(Guid offerId, Guid userId, JobOfferUpdateDto dto)
         {
-            var offer = await GetJobOfferByIdAsync(offerId);
+            var offer = await GetJobOfferByIdAsync(offerId, userId);
             if (offer.UserId != userId)
                 throw new UnauthorizedAccessException("You do not have permission to update this job offer.");
 

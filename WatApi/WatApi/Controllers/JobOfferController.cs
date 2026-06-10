@@ -18,7 +18,7 @@ namespace WatApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateJobOffer([FromBody] JobOfferCreateDto dto)
         {
-            var userId = Guid.Parse(User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier).Value);
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var jobOffer = await _service.CreateJobOfferAsync(userId, dto);
 
             var jobOfferResponse = new JobOfferResponseDto
@@ -43,7 +43,8 @@ namespace WatApi.Controllers
         [HttpGet("{offerId}")]
         public async Task<IActionResult> GetJobOffer(Guid offerId)
         {
-            var jobOffer = await _service.GetJobOfferByIdAsync(offerId);
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var jobOffer = await _service.GetJobOfferByIdAsync(offerId, userId);
 
             var jobOfferResponse = new JobOfferResponseDto
             {
@@ -90,8 +91,7 @@ namespace WatApi.Controllers
         [HttpPut("{offerId}")]
         public async Task<IActionResult> UpdateJobOffer(Guid offerId, [FromBody] JobOfferUpdateDto dto)
         {
-            var userId = Guid.Parse(User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier).Value);
-
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var updatedOffer = await _service.UpdateJobOfferAsync(offerId, userId, dto);
 
             var jobOfferResponse = new JobOfferResponseDto
@@ -115,7 +115,8 @@ namespace WatApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteJobOffer(Guid id)
         {
-            await _service.DeleteJobOfferAsync(id);
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            await _service.DeleteJobOfferAsync(id, userId);
             return NoContent();
         }
 
