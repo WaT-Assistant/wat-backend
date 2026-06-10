@@ -1,0 +1,32 @@
+name: WatApi Backend CI
+
+# Trigger workflow on push or pull request to the main branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    # Use the latest Ubuntu virtual machine
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Clone the repository code
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Step 2: Set up .NET 8 SDK
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    # Step 3: Restore NuGet packages (вказано шлях до папки WatApi)
+    - name: Restore dependencies
+      run: dotnet restore WatApi/WatApi.sln
+
+    # Step 4: Compile the project in Release mode
+    - name: Build project
+      run: dotnet build WatApi/WatApi.sln --no-restore --configuration Release
