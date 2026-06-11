@@ -2,3 +2,6 @@
 **/obj/
 .git/
 .github/
+.gitignore
+.env
+**/scripts/
