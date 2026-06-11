@@ -19,7 +19,7 @@ This project is fully dockerized. You do not need to install the .NET SDK or Pos
 
 **1. Clone the repository:**
 ```bash
-git clone https://github.com/WaT-Assistant/wat-backend.git]
+git clone https://github.com/WaT-Assistant/wat-backend.git
 ```
 **Note!
 Always switch to your project root in your command line.
