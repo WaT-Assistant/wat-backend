@@ -430,3 +430,7 @@ FodyWeavers.xsd
 
 .env
 scripts/
+
+# Ignore annoying Copilot auto-generated files
+**/copilot-instructions.md
+WatApi/.github/
