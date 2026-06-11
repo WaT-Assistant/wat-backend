@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # 1. Backend API Service
+  api:
+    build: .
+    container_name: wat_api
+    ports:
+      - "8080:8080"
+    environment:
+      # Override the connection string to point to the Docker internal network.
+      # Note: The host must match the database service name ('db') below.
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=wat_db;Username=postgres;Password=supersecret
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Jwt__Key=${JWT_SECRET}
+    depends_on:
+      - db
+
+  # 2. PostgreSQL Database Service
+  db:
+    image: postgres:15-alpine
+    container_name: wat_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: supersecret
+      POSTGRES_DB: wat_db
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persist database data to the host to prevent data loss on container restart
+      - postgres_data:/var/lib/postgresql/data
+
+  # 3. Adminer (Lightweight database management UI)
+  adminer:
+    image: adminer
+    container_name: wat_adminer
+    restart: always
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+
+# Declare the named volume for PostgreSQL data persistence
+volumes:
+  postgres_data:
