@@ -54,6 +54,16 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()                     
+              .AllowAnyMethod();                   
+    });
+});
+
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJobOfferService, JobOfferService>();
@@ -94,12 +104,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowAngularFrontend");
+
+// Apply rate limiting early so abusive requests are rejected quickly
+app.UseMiddleware<RateLimitingMiddleware>();
+
 // Ensure authentication middleware runs before authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Apply rate limiting early so abusive requests are rejected quickly
-app.UseMiddleware<RateLimitingMiddleware>();
 
 app.MapControllers();
 
