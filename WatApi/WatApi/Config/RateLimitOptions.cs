@@ -3,7 +3,7 @@
     public class RateLimitOptions
     {
         // Use authenticated user id as key when available; otherwise use remote IP
-        public bool UseUserId { get; set; } = true;
+        public bool UseUserId { get; set; } = false;
 
         // Maximum requests allowed per window
         public int PermitLimit { get; set; } = 100;
