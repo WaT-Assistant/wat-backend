@@ -40,7 +40,7 @@ namespace WatApi.Services
         }
 
         public async Task<IEnumerable<JobOffer>> GetAllJobOffersAsync(Guid userId) =>
-            await _context.JobOffers
+            await _context.JobOffers.Include(jo => jo.ImportantInfo)
         .Where(jo => jo.UserId == userId)
         .ToListAsync();
 
