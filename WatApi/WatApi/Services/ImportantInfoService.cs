@@ -39,6 +39,17 @@ namespace WatApi.Services
             return importantInfo;
         }
 
+        public async Task DeleteImportantInfoAsync(Guid id, Guid userId)
+        {
+            var info = await _context.ImportantInfos.Include(i => i.JobOffer)
+                .FirstOrDefaultAsync(i => i.Id == id ) ?? throw new KeyNotFoundException("Info not found.");
+            if (info.JobOffer.UserId != userId)
+                throw new KeyNotFoundException("Info not found.");
+
+            _context.ImportantInfos.Remove(info);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<ImportantInfo?> GetImportantInfoByJobOfferIdAsync(Guid jobOfferId, Guid userId)
         {
             var offer = await _context.JobOffers.Include(jo => jo.ImportantInfo).FirstOrDefaultAsync(jo => jo.Id == jobOfferId) ?? throw new KeyNotFoundException("Job offer not found.");

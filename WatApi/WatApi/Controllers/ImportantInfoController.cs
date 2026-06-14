@@ -22,6 +22,7 @@ namespace WatApi.Controllers
 
             var response = new ImportantInfoResponseDto
             {
+                Id = createdInfo.Id,
                 SevisId = createdInfo.SevisID,
                 VisaAppointment = createdInfo.VisaAppointment,
                 FlightDate = createdInfo.Flight,
@@ -44,6 +45,7 @@ namespace WatApi.Controllers
 
             var response = new ImportantInfoResponseDto
             {
+                Id = importantInfo.Id,
                 SevisId = importantInfo.SevisID,
                 VisaAppointment = importantInfo.VisaAppointment,
                 FlightDate = importantInfo.Flight,
@@ -63,6 +65,7 @@ namespace WatApi.Controllers
 
             var response = new ImportantInfoResponseDto
             {
+                Id = updatedInfo.Id,
                 SevisId = updatedInfo.SevisID,
                 VisaAppointment = updatedInfo.VisaAppointment,
                 FlightDate = updatedInfo.Flight,
@@ -72,6 +75,15 @@ namespace WatApi.Controllers
             };
 
             return Ok(response);
+        }
+
+        [HttpDelete("${id}")]
+        public async Task<IActionResult> DeleteImportantInfoById(Guid id)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            await _importantInfoService.DeleteImportantInfoAsync(id, userId);
+
+            return NoContent();
         }
     }
 }
