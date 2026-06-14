@@ -2,6 +2,7 @@
 {
     public class ImportantInfoResponseDto
     {
+        public Guid Id { get; set; }
         public string? SevisId { get; set; }
         public DateOnly? VisaAppointment { get; set; }
         public DateOnly? FlightDate { get; set; }
