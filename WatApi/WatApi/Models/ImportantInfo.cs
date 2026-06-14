@@ -6,10 +6,10 @@
         public JobOffer JobOffer { get; set; } = null!;
         public Guid JobOfferId { get; set; }
         public string? SevisID { get; set; } = string.Empty;
-        public DateTime? VisaAppointment { get; set; }
-        public DateTime? Flight { get; set; }
+        public DateOnly? VisaAppointment { get; set; }
+        public DateOnly? Flight { get; set; }
         public string? DS160 { get; set; } = string.Empty;
-        public DateTime? StartOfWork { get; set; }
-        public DateTime? EndOfWork { get; set; }
+        public DateOnly? StartOfWork { get; set; }
+        public DateOnly? EndOfWork { get; set; }
     }
 }
