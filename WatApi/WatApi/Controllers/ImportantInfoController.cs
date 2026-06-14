@@ -76,5 +76,14 @@ namespace WatApi.Controllers
 
             return Ok(response);
         }
+
+        [HttpDelete("${id}")]
+        public async Task<IActionResult> DeleteImportantInfoById(Guid id)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            await _importantInfoService.DeleteImportantInfoAsync(id, userId);
+
+            return NoContent();
+        }
     }
 }

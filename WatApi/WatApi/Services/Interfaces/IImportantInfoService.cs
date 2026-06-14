@@ -9,5 +9,6 @@ namespace WatApi.Services.Interfaces
             ImportantInfoCreateDto dto);
         Task<ImportantInfo> UpdateImportantInfoAsync(Guid userId, Guid jobOfferId,
             ImportantInfoUpdateDto dto);
+        Task DeleteImportantInfoAsync(Guid id, Guid userId);
     }
 }
