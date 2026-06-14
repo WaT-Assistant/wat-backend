@@ -6,6 +6,7 @@
         public DateTime? VisaAppointment { get; set; }
         public DateTime? FlightDate { get; set; }
         public string? Ds160 { get; set; }
-        public string? Ds2019 { get; set; }
+        public DateTime? StartOfWork { get; set; }
+        public DateTime? EndOfWork { get; set; }
     }
 }

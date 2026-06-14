@@ -26,7 +26,8 @@ namespace WatApi.Controllers
                 VisaAppointment = createdInfo.VisaAppointment,
                 FlightDate = createdInfo.Flight,
                 Ds160 = createdInfo.DS160,
-                Ds2019 = createdInfo.DS2019
+                StartOfWork = createdInfo.StartOfWork,
+                EndOfWork = createdInfo.EndOfWork
             };
 
             return Ok(response);
@@ -47,7 +48,8 @@ namespace WatApi.Controllers
                 VisaAppointment = importantInfo.VisaAppointment,
                 FlightDate = importantInfo.Flight,
                 Ds160 = importantInfo.DS160,
-                Ds2019 = importantInfo.DS2019
+                StartOfWork= importantInfo.StartOfWork,
+                EndOfWork = importantInfo.EndOfWork
             };
 
             return Ok(response);
@@ -65,7 +67,8 @@ namespace WatApi.Controllers
                 VisaAppointment = updatedInfo.VisaAppointment,
                 FlightDate = updatedInfo.Flight,
                 Ds160 = updatedInfo.DS160,
-                Ds2019 = updatedInfo.DS2019
+                StartOfWork = updatedInfo.StartOfWork,
+                EndOfWork = updatedInfo.EndOfWork
             };
 
             return Ok(response);

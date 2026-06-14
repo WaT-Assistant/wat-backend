@@ -29,7 +29,8 @@ namespace WatApi.Services
                 VisaAppointment = dto.VisaAppointment,
                 Flight = dto.FlightDate,
                 DS160 = dto.Ds160,
-                DS2019 = dto.Ds2019
+                StartOfWork = dto.StartOfWork,
+                EndOfWork = dto.EndOfWork
             };
 
             _context.ImportantInfos.Add(importantInfo);
@@ -68,7 +69,8 @@ namespace WatApi.Services
             offer.ImportantInfo.VisaAppointment = dto.VisaAppointment;
             offer.ImportantInfo.Flight = dto.FlightDate;
             offer.ImportantInfo.DS160 = dto.Ds160;
-            offer.ImportantInfo.DS2019 = dto.Ds2019;
+            offer.ImportantInfo.StartOfWork = dto.StartOfWork;
+            offer.ImportantInfo.EndOfWork = dto.EndOfWork;
 
             await _context.SaveChangesAsync();
             return offer.ImportantInfo;

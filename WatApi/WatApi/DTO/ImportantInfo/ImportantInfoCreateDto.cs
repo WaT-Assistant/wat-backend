@@ -11,7 +11,7 @@ namespace WatApi.DTO.ImportantInfo
         public DateTime? FlightDate { get; set; }
         [MaxLength(30, ErrorMessage = "DS160 number can't exceed 30 characters!")]
         public string? Ds160 { get; set; }
-        [MaxLength(30, ErrorMessage = "DS2019 number can't exceed 30 characters!")]
-        public string? Ds2019 { get; set; }
+        public DateTime? StartOfWork { get; set; }
+        public DateTime? EndOfWork { get; set; }
     }
 }

@@ -9,6 +9,7 @@
         public DateTime? VisaAppointment { get; set; }
         public DateTime? Flight { get; set; }
         public string? DS160 { get; set; } = string.Empty;
-        public string? DS2019 { get; set; } = string.Empty;
+        public DateTime? StartOfWork { get; set; }
+        public DateTime? EndOfWork { get; set; }
     }
 }
