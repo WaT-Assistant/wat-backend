@@ -1,15 +1,18 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options; 
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using WatApi.Config;
 using WatApi.Data;
 using WatApi.Middleware;
 using WatApi.Services;
 using WatApi.Services.Interfaces;
-using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options; 
+using WatApi.Validators.JobOffer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,11 @@ builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"))
 builder.Services.AddMemoryCache();
 builder.Services.Configure<RateLimitOptions>(builder.Configuration.GetSection("RateLimiting"));
 // -----------------------------------------------------
+
+// Data ASP.NET Core validation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<JobOfferCreateDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<JobOfferUpdateDtoValidator>();
 
 // Add services to the container
 builder.Services.AddControllers();
