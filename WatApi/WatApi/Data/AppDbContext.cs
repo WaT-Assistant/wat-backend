@@ -22,10 +22,6 @@ namespace WatApi.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<JobOffer>()
-            .Property(j => j.Status)
-            .HasConversion<string>();
-
-            modelBuilder.Entity<JobOffer>()
                 .HasOne(j => j.ImportantInfo)
                 .WithOne(i => i.JobOffer)
                 .HasForeignKey<ImportantInfo>(i => i.JobOfferId)

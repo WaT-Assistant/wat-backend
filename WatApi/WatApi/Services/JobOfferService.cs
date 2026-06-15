@@ -75,7 +75,6 @@ namespace WatApi.Services
             offer.PayPerHour = dto.PayPerHour;
             offer.HousingProvided = dto.HousingProvided;
             offer.HousingCostPerWeek = dto.HousingCostPerWeek;
-            offer.Status = dto.Status;
             offer.Year = dto.Year;
 
             await _context.SaveChangesAsync();
