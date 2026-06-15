@@ -9,6 +9,7 @@ namespace WatApi.Validators.JobOffer
         {
             RuleFor(x => x.Position).NotEmpty().WithMessage("Position field can't be empty!");
             RuleFor(x => x.Employer).NotEmpty().WithMessage("Employer field can't be empty!");
+            RuleFor(x => x.PlaceOfWork).NotEmpty().WithMessage("Location field can't be empty!");
 
             RuleFor(x => x.HousingCostPerWeek)
                 .NotNull()
