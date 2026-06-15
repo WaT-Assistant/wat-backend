@@ -77,7 +77,6 @@ namespace WatApi.Controllers
                 Employer = offer.Employer,
                 PlaceOfWork = offer.PlaceOfWork,
                 PayPerHour = offer.PayPerHour,
-                Status = offer.Status,
                 HousingProvided = offer.HousingProvided,
                 HousingCostPerWeek = offer.HousingCostPerWeek,
                 Year = offer.Year,
