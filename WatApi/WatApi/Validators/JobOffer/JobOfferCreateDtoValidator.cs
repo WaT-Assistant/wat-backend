@@ -5,7 +5,7 @@ namespace WatApi.Validators.JobOffer
 {
     public class JobOfferCreateDtoValidator: AbstractValidator<JobOfferCreateDto>
     {
-        private readonly int _currentYear = new DateOnly().Year;
+        private readonly int _currentYear = DateTime.UtcNow.Year;
         public JobOfferCreateDtoValidator()
         {
             RuleFor(x => x.Position).NotEmpty().WithMessage("Position field can't be empty!");
@@ -13,7 +13,7 @@ namespace WatApi.Validators.JobOffer
             RuleFor(x => x.PlaceOfWork).NotEmpty().WithMessage("Location field can't be empty!");
             RuleFor(x => x.PayPerHour).GreaterThan(0)
                 .WithMessage("Hourly pay should be greater than zero");
-            RuleFor(x => x.Year).InclusiveBetween(_currentYear - 6, _currentYear + 1)
+            RuleFor(x => x.Year).InclusiveBetween(_currentYear - 7, _currentYear + 2)
                 .WithMessage($"Year should be within {_currentYear - 6} and {_currentYear + 1}");
 
             RuleFor(x => x.HousingCostPerWeek).GreaterThanOrEqualTo(0)
