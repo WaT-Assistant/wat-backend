@@ -42,6 +42,7 @@ namespace WatApi.Services
         public async Task<IEnumerable<JobOffer>> GetAllJobOffersAsync(Guid userId) =>
             await _context.JobOffers
         .Where(jo => jo.UserId == userId)
+        .OrderByDescending(jo => jo.CreatedAt)
         .ToListAsync();
 
         public async Task<JobOffer> GetJobOfferByIdAsync(Guid offerId, Guid userId)
