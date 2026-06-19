@@ -16,5 +16,6 @@
         public string? Feedback { get; set; }
         public int? Rating { get; set; }
         public ImportantInfo? ImportantInfo { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }
