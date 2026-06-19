@@ -44,5 +44,19 @@ namespace WatApi.Controllers
             Response.Cookies.Append("jwt", token, cookieOptions);
             return Ok(new { message = "Login successful" });
         }
+
+        [HttpPost("Logout")]
+        public IActionResult Logout()
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+            };
+
+            Response.Cookies.Delete("jwt", cookieOptions);
+            return Ok(new { message = "Logout successful" });
+        }
     }
 }
