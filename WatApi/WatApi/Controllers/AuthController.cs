@@ -32,8 +32,17 @@ namespace WatApi.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
         {
-                string token = await _authService.LoginAsync(dto);
-                return Ok(new { Token = token });
+            string token = await _authService.LoginAsync(dto);
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddHours(2)
+            };
+            Response.Cookies.Append("jwt", token, cookieOptions);
+            return Ok(new { message = "Login successful" });
         }
     }
 }
