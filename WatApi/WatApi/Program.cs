@@ -67,8 +67,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngularFrontend", policy =>
     {
         policy.WithOrigins("http://localhost:4200")
-              .AllowAnyHeader()                     
-              .AllowAnyMethod();                   
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
@@ -95,6 +96,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!))
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["jwt"];
+                return Task.CompletedTask;
+            }
         };
     });
 
