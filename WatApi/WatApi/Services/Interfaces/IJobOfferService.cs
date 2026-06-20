@@ -11,5 +11,6 @@ namespace WatApi.Services.Interfaces
         Task<JobOffer> UpdateJobOfferAsync(Guid offerId, Guid userId, JobOfferUpdateDto dto);
         Task DeleteJobOfferAsync(Guid id, Guid userId);
         Task<JobOffer> PublishJobOfferAsync(Guid offerId, Guid userId, JobOfferPublishDto dto);
+        Task<IEnumerable<JobOffer>> GetPublishedJobOffersAsync(int skipAmount, int pageSize);
     }
 }

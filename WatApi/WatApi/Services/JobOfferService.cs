@@ -52,6 +52,12 @@ namespace WatApi.Services
             return offer ?? throw new KeyNotFoundException("Job offer not found.");
         }
 
+        public async Task<IEnumerable<JobOffer>> GetPublishedJobOffersAsync(int skipAmount, int pageSize)
+            => await _context.JobOffers.Where(jo => jo.IsPublished)
+                .OrderByDescending(jo => jo.CreatedAt)
+                .Skip(skipAmount).Take(pageSize).ToListAsync();
+
+
         public async Task<JobOffer> PublishJobOfferAsync(Guid offerId, Guid userId, JobOfferPublishDto dto)
         {
             var offer = await GetJobOfferByIdAsync(offerId, userId);
