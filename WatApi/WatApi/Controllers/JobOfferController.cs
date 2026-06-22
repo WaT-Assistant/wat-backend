@@ -68,6 +68,15 @@ namespace WatApi.Controllers
             return Ok(MapToDto(publishedOffer));
         }
 
+        [AllowAnonymous]
+        [HttpGet("published")]
+        public async Task<IActionResult> GetPublishedJobOffers([FromQuery] int page, [FromQuery] int pageSize)
+        {
+            int skipAmount = (page - 1) * pageSize;
+            var publishedOffers = await _service.GetPublishedJobOffersAsync(skipAmount, pageSize);
+            return Ok(publishedOffers.Select(MapToDto));
+        }
+
         private static JobOfferResponseDto MapToDto(JobOffer offer)
         {
             return new JobOfferResponseDto

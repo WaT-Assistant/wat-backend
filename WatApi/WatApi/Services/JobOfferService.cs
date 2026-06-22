@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Xml;
 using WatApi.Data;
 using WatApi.DTO.JobOffer;
 using WatApi.Models;
@@ -14,6 +15,7 @@ namespace WatApi.Services
         {
             var jobOffer = new JobOffer()
             {
+                Id = Guid.NewGuid(),
                 UserId = userId,
                 Position = dto.Position,
                 Employer = dto.Employer,
@@ -22,6 +24,7 @@ namespace WatApi.Services
                 HousingProvided = dto.HousingProvided,
                 HousingCostPerWeek = dto.HousingCostPerWeek,
                 Year = dto.Year,
+                CreatedAt = DateTime.UtcNow,
             };
 
             _context.JobOffers.Add(jobOffer);
@@ -51,6 +54,12 @@ namespace WatApi.Services
                 .FirstOrDefaultAsync(jo => jo.Id == offerId && jo.UserId == userId);
             return offer ?? throw new KeyNotFoundException("Job offer not found.");
         }
+
+        public async Task<IEnumerable<JobOffer>> GetPublishedJobOffersAsync(int skipAmount, int pageSize)
+            => await _context.JobOffers.Where(jo => jo.IsPublished)
+                .OrderByDescending(jo => jo.CreatedAt)
+                .Skip(skipAmount).Take(pageSize).ToListAsync();
+
 
         public async Task<JobOffer> PublishJobOfferAsync(Guid offerId, Guid userId, JobOfferPublishDto dto)
         {
