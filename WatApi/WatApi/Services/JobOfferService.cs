@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Xml;
 using WatApi.Data;
 using WatApi.DTO.JobOffer;
 using WatApi.Models;
@@ -14,6 +15,7 @@ namespace WatApi.Services
         {
             var jobOffer = new JobOffer()
             {
+                Id = Guid.NewGuid(),
                 UserId = userId,
                 Position = dto.Position,
                 Employer = dto.Employer,
@@ -22,6 +24,7 @@ namespace WatApi.Services
                 HousingProvided = dto.HousingProvided,
                 HousingCostPerWeek = dto.HousingCostPerWeek,
                 Year = dto.Year,
+                CreatedAt = DateTime.UtcNow,
             };
 
             _context.JobOffers.Add(jobOffer);
