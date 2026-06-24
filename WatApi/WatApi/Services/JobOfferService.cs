@@ -75,6 +75,17 @@ namespace WatApi.Services
             return offer;
         }
 
+        public async Task<JobOffer> UnpublishJobOfferAsync(Guid offerId, Guid userId)
+        {
+            var offer = await GetJobOfferByIdAsync(offerId, userId);
+            if (!offer.IsPublished)
+                throw new InvalidOperationException("This offer is not yet published");
+
+            offer.IsPublished = false;
+            await _context.SaveChangesAsync();
+            return offer;
+        }
+
         public async Task<JobOffer> UpdateJobOfferAsync(Guid offerId, Guid userId, JobOfferUpdateDto dto)
         {
             var offer = await GetJobOfferByIdAsync(offerId, userId);

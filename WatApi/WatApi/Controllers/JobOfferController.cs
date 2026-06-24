@@ -77,6 +77,14 @@ namespace WatApi.Controllers
             return Ok(publishedOffers.Select(MapToDto));
         }
 
+        [HttpPut("{id}/unpublish")]
+        public async Task<IActionResult> UnpublishJobOffer(Guid id)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var unpublishOffer = await _service.UnpublishJobOfferAsync(id, userId);
+            return Ok(MapToDto(unpublishOffer));
+        }
+
         private static JobOfferResponseDto MapToDto(JobOffer offer)
         {
             return new JobOfferResponseDto
