@@ -59,8 +59,12 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<AppDbContext>(options => {
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    if(builder.Environment.IsDevelopment())
+        options.LogTo(Console.WriteLine, LogLevel.Information).EnableSensitiveDataLogging();
+    }
+);
 
 builder.Services.AddCors(options =>
 {
