@@ -74,7 +74,7 @@ namespace WatApi.Controllers
         {
             int skipAmount = (page - 1) * pageSize;
             var publishedOffers = await _service.GetPublishedJobOffersAsync(skipAmount, pageSize);
-            return Ok(publishedOffers.Select(MapToDto));
+            return Ok(publishedOffers.Select(MapToPublicDto));
         }
 
         [HttpPut("{id}/unpublish")]
@@ -86,8 +86,7 @@ namespace WatApi.Controllers
         }
 
         private static JobOfferResponseDto MapToDto(JobOffer offer)
-        {
-            return new JobOfferResponseDto
+            => new ()
             {
                 Id = offer.Id,
                 Position = offer.Position,
@@ -101,6 +100,21 @@ namespace WatApi.Controllers
                 Feedback = offer.Feedback,
                 Rating = offer.Rating
             };
-        }
+        private static JobOfferPublishResponseDto MapToPublicDto(JobOffer offer)
+            => new()
+            {
+                Id = offer.Id,
+                Position = offer.Position,
+                Employer = offer.Employer,
+                PlaceOfWork = offer.PlaceOfWork,
+                PayPerHour = offer.PayPerHour,
+                HousingProvided = offer.HousingProvided,
+                HousingCostPerWeek = offer.HousingCostPerWeek,
+                Year = offer.Year,
+                IsPublished = offer.IsPublished,
+                Feedback = offer.Feedback,
+                Rating = offer.Rating,
+                AuthorName = offer.User?.FullName
+            };
     }
 }
