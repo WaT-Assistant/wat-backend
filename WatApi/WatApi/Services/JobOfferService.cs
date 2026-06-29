@@ -44,6 +44,7 @@ namespace WatApi.Services
 
         public async Task<IEnumerable<JobOffer>> GetAllJobOffersAsync(Guid userId) =>
             await _context.JobOffers
+        .AsNoTracking()
         .Where(jo => jo.UserId == userId)
         .OrderByDescending(jo => jo.CreatedAt)
         .ToListAsync();
@@ -56,7 +57,10 @@ namespace WatApi.Services
         }
 
         public async Task<IEnumerable<JobOffer>> GetPublishedJobOffersAsync(int skipAmount, int pageSize)
-            => await _context.JobOffers.Where(jo => jo.IsPublished)
+            => await _context.JobOffers
+                .AsNoTracking()
+                .Include(jo => jo.User)
+                .Where(jo => jo.IsPublished)
                 .OrderByDescending(jo => jo.CreatedAt)
                 .Skip(skipAmount).Take(pageSize).ToListAsync();
 
