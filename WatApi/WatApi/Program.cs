@@ -82,6 +82,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJobOfferService, JobOfferService>();
 builder.Services.AddScoped<IImportantInfoService, ImportantInfoService>();
 builder.Services.AddScoped<INoteService, NoteService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Authentication setup (reads from configuration)
 var key = builder.Configuration["Jwt:Key"];
