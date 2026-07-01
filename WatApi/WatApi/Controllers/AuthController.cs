@@ -63,7 +63,17 @@ namespace WatApi.Controllers
         {
             var refreshToken = Request.Cookies["refreshToken"];
             if (!string.IsNullOrWhiteSpace(refreshToken))
-                 await _tokenService.RevokeTokenAsync(refreshToken);
+            {
+                try
+                {
+                    await _tokenService.RevokeTokenAsync(refreshToken);
+                }
+                catch (Exception)
+                {
+                    // Ignore exceptions during logout to ensure the user is
+                    // logged out even if token revocation fails.
+                }
+            }
 
             var cookieOptions = new CookieOptions
             {
