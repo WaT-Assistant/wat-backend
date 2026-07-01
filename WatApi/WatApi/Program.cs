@@ -2,10 +2,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options; 
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using System.Text;
 using WatApi.Config;
 using WatApi.Data;
@@ -128,6 +125,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAngularFrontend");
+
+app.UseMiddleware<CsrfHeaderMiddleware>();
 
 // Apply rate limiting early so abusive requests are rejected quickly
 app.UseMiddleware<RateLimitingMiddleware>();
