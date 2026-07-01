@@ -36,7 +36,7 @@ namespace WatApi.Controllers
         {
             var user = await _authService.LoginAsync(dto);
             string accessToken = _tokenService.GenerateJWT(user);
-            var refreshToken = await _tokenService.GenerateRefreshToken(user.Id);
+            var refreshToken = await _tokenService.GenerateAndSaveRefreshToken(user.Id);
 
             var cookieAccessOptions = new CookieOptions
             {
@@ -59,8 +59,12 @@ namespace WatApi.Controllers
         }
 
         [HttpPost("Logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
+            var refreshToken = Request.Cookies["refreshToken"];
+            if (!string.IsNullOrWhiteSpace(refreshToken))
+                 await _tokenService.RevokeTokenAsync(refreshToken);
+
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
@@ -69,16 +73,11 @@ namespace WatApi.Controllers
             };
 
             Response.Cookies.Delete("jwt", cookieOptions);
+            Response.Cookies.Delete("refreshToken", cookieOptions);
             return Ok(new { message = "Logout successful" });
         }
 
-        //[HttpPost("RevokeAllRefreshTokens/{userId}")]
-        //public async Task RevokeAllRefreshTokensById(Guid userId)
-        //{
-        //    await _tokenService.RevokeAllRefreshTokensByIdAsync(userId);
-        //}
-
-        [HttpPost("refresh")]
+        [HttpPost("Refresh")]
         public async Task<IActionResult> Refresh()
         {
             var refreshToken = Request.Cookies["refreshToken"];

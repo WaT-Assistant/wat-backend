@@ -10,8 +10,9 @@ namespace WatApi.Services.Interfaces
     public interface ITokenService
     {
         public string GenerateJWT(User user);
-        public Task<string> GenerateRefreshToken(Guid userId);
-        public Task RevokeAllRefreshTokensByIdAsync(Guid userId);
+        public Task<string> GenerateAndSaveRefreshToken(Guid userId);
+        public Task RevokeAllRefreshTokensByIdAsync(Guid userId, string reason);
         public Task<RefreshResult> RefreshAsync(string refreshToken);
+        public Task RevokeTokenAsync(string refreshToken);
     }
 }
