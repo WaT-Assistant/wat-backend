@@ -123,8 +123,7 @@ namespace WatApi.Services
         {
             var (selector, secret) = ParseRefreshToken(refreshToken);
             var existingToken = await _context.RefreshTokens
-                .FirstOrDefaultAsync(rt => rt.Selector == selector)
-                ?? throw new UnauthorizedAccessException("Invalid or expired refresh token.");
+                .FirstOrDefaultAsync(rt => rt.Selector == selector);
 
             if (existingToken is not null && existingToken.IsActive &&
                 RefreshTokenHasher.Verify(secret, existingToken.Token))

@@ -45,7 +45,7 @@ namespace WatApi.Data
                 .IsUnique();
 
             modelBuilder.Entity<RefreshToken>()
-                .HasIndex(rt => rt.Token);
+                .HasIndex(rt => rt.UserId);
         }
     }
 }

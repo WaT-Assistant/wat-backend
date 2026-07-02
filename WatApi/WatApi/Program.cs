@@ -54,6 +54,8 @@ builder.Services.AddSwaggerGen(c =>
             Array.Empty<string>()
         }
     });
+
+    c.OperationFilter<SwaggerCsrfHeaderFilter>();
 });
 
 builder.Services.AddDbContext<AppDbContext>(options => {
