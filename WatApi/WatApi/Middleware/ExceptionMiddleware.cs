@@ -34,6 +34,7 @@ namespace WatApi.Middleware
             {
                 InvalidOperationException => StatusCodes.Status400BadRequest,
                 KeyNotFoundException => StatusCodes.Status404NotFound,
+                UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
                 _ => StatusCodes.Status500InternalServerError
             };
 
