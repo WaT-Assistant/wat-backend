@@ -9,7 +9,7 @@
         public DateTime CreatedAt { get; set; }
         public DateTime ExpiresAt { get; set; }
         public DateTime? RevokedAt { get; set; }
-
+        public Guid DeviceId { get; set; }
         // Record the token that replaced it.
         public string? ReplacedByToken { get; set; }
         // Record if the token was revoked due to a security breach or other forceful action.

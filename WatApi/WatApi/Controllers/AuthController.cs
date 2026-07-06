@@ -34,9 +34,14 @@ namespace WatApi.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
         {
+            var cookieDeviceId = Request.Cookies["deviceId"];
+            if (string.IsNullOrWhiteSpace(cookieDeviceId) || !Guid.TryParse
+                (cookieDeviceId, out Guid deviceId))
+                deviceId = Guid.NewGuid();
+
             var user = await _authService.LoginAsync(dto);
             string accessToken = _tokenService.GenerateJWT(user);
-            var refreshToken = await _tokenService.GenerateAndSaveRefreshToken(user.Id);
+            var refreshToken = await _tokenService.GenerateAndSaveRefreshToken(user.Id, deviceId);
 
             var cookieAccessOptions = new CookieOptions
             {
@@ -52,9 +57,18 @@ namespace WatApi.Controllers
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(7)
             };
+            var cookieDeviceOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddYears(10)
+            };
 
             Response.Cookies.Append("jwt", accessToken, cookieAccessOptions);
             Response.Cookies.Append("refreshToken", refreshToken, cookieRefreshOptions);
+            Response.Cookies.Append("deviceId", deviceId.ToString(), cookieDeviceOptions);
+
             return Ok(new { message = "Login successful" });
         }
 
@@ -94,7 +108,11 @@ namespace WatApi.Controllers
             if (string.IsNullOrWhiteSpace(refreshToken))
                 return Unauthorized("Missing refresh token.");
 
-            var result = await _tokenService.RefreshAsync(refreshToken);
+            var cookieDeviceId = Request.Cookies["deviceId"];
+            if (string.IsNullOrWhiteSpace(cookieDeviceId) || !Guid.TryParse
+                (cookieDeviceId, out Guid deviceId))
+                return Unauthorized("Missing or invalid device ID.");
+            var result = await _tokenService.RefreshAsync(refreshToken, deviceId);
 
             var cookieAccessOptions = new CookieOptions
             {

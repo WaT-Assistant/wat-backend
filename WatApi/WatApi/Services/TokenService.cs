@@ -42,7 +42,7 @@ namespace WatApi.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public string TrackNewRawRefreshToken(Guid userId)
+        public string TrackNewRawRefreshToken(Guid userId, Guid deviceId)
         {
             var selector = GenerateBase64UrlToken(16);
             var secret = GenerateBase64UrlToken(32);
@@ -55,20 +55,30 @@ namespace WatApi.Services
                 Token = RefreshTokenHasher.HashToken(secret),
                 ExpiresAt = DateTime.UtcNow.AddDays(7),
                 CreatedAt = DateTime.UtcNow,
+                DeviceId = deviceId,
                 UserId = userId
             });
 
             return rawRefreshToken;
         }
 
-        public async Task<string> GenerateAndSaveRefreshToken(Guid userId)
+        public async Task<string> GenerateAndSaveRefreshToken(Guid userId, Guid deviceId)
         {
-            var rawRefreshToken = TrackNewRawRefreshToken(userId);
+            var existingToken = await _context.RefreshTokens
+                .FirstOrDefaultAsync(rt => rt.UserId == userId && rt.DeviceId == deviceId && rt.RevokedAt == null);
+
+            if (existingToken is not null)
+            {
+                existingToken.RevokedAt = DateTime.UtcNow;
+                existingToken.RevokeReason = "New refresh token generated for the same device.";
+            }
+
+            var rawRefreshToken = TrackNewRawRefreshToken(userId, deviceId);
             await _context.SaveChangesAsync();
             return rawRefreshToken;
         }
 
-        public async Task<RefreshResult> RefreshAsync(string refreshToken)
+        public async Task<RefreshResult> RefreshAsync(string refreshToken, Guid currentDeviceId)
         {
             var (selector, secret) = ParseRefreshToken(refreshToken);
 
@@ -90,12 +100,20 @@ namespace WatApi.Services
                 throw new UnauthorizedAccessException("Invalid or expired refresh token.");
             }
 
+            if (existingToken.DeviceId != currentDeviceId)
+            {
+                await RevokeAllRefreshTokensByIdAsync(existingToken.UserId, 
+                    "Refresh token used from a different device.");
+                throw new UnauthorizedAccessException
+                    ("Refresh token is not valid for the current device.");
+            }
+
             var user = await _context.Users.FindAsync(existingToken.UserId)
                 ?? throw new InvalidOperationException("User not found for the provided refresh token.");
 
             existingToken.RevokedAt = DateTime.UtcNow;
 
-            var newRefreshToken =  TrackNewRawRefreshToken(user.Id);
+            var newRefreshToken =  TrackNewRawRefreshToken(user.Id, existingToken.DeviceId);
             var (newSelector, _) = ParseRefreshToken(newRefreshToken);
             existingToken.ReplacedByToken = newSelector;
 
