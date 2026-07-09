@@ -1,7 +1,9 @@
-﻿namespace WatApi.Services.Interfaces
+﻿using WatApi.Models;
+
+namespace WatApi.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<string> LoginAsync(WatApi.DTO.User.UserLoginDto dto);
+        Task<User> LoginAsync(WatApi.DTO.User.UserLoginDto dto);
     }
 }

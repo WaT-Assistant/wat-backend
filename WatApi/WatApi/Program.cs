@@ -2,10 +2,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options; 
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using System.Text;
 using WatApi.Config;
 using WatApi.Data;
@@ -28,6 +25,7 @@ builder.Services.Configure<RateLimitOptions>(builder.Configuration.GetSection("R
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<JobOfferCreateDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<JobOfferUpdateDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<JobOfferPublishDtoValidator>();
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -57,10 +55,16 @@ builder.Services.AddSwaggerGen(c =>
             Array.Empty<string>()
         }
     });
+
+    c.OperationFilter<SwaggerCsrfHeaderFilter>();
 });
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<AppDbContext>(options => {
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    if(builder.Environment.IsDevelopment())
+        options.LogTo(Console.WriteLine, LogLevel.Information).EnableSensitiveDataLogging();
+    }
+);
 
 builder.Services.AddCors(options =>
 {
@@ -78,6 +82,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJobOfferService, JobOfferService>();
 builder.Services.AddScoped<IImportantInfoService, ImportantInfoService>();
 builder.Services.AddScoped<INoteService, NoteService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Authentication setup (reads from configuration)
 var key = builder.Configuration["Jwt:Key"];
@@ -123,6 +128,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAngularFrontend");
+
+app.UseMiddleware<CsrfHeaderMiddleware>();
 
 // Apply rate limiting early so abusive requests are rejected quickly
 app.UseMiddleware<RateLimitingMiddleware>();

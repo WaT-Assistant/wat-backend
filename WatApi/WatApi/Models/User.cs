@@ -9,5 +9,6 @@
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public ICollection<JobOffer> JobOffer { get; set; } = [];
         public ICollection<Note> Notes { get; set; } = [];
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
     }
 }
