@@ -25,6 +25,7 @@ builder.Services.Configure<RateLimitOptions>(builder.Configuration.GetSection("R
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<JobOfferCreateDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<JobOfferUpdateDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<JobOfferPublishDtoValidator>();
 
 // Add services to the container
 builder.Services.AddControllers();
